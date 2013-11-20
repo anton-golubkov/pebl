@@ -37,7 +37,9 @@ class _ScoredNetwork(Network):
 
     """
 
-    def __init__(self, edgelist, score):
+    def __init__(self, edgelist, score, nodes=None):
+        if nodes is not None:
+            super(_ScoredNetwork, self).__init__(nodes, edgelist)
         self.edges = edgelist
         self.score = score
 
@@ -117,14 +119,14 @@ class LearnerResult:
 
         if self.size == 0 or len(nets) < self.size:
             if nethash not in nethashes:
-                snet = _ScoredNetwork(copy(net.edges), score)
+                snet = _ScoredNetwork(copy(net.edges), score, copy(net.nodes))
                 insort(nets, snet)
                 nethashes[nethash] = 1
         elif score > nets[0].score and nethash not in nethashes:
             nethashes.pop(hash(nets[0].edges))
             nets.remove(nets[0])
 
-            snet = _ScoredNetwork(copy(net.edges), score)
+            snet = _ScoredNetwork(copy(net.edges), score, copy(net.nodes))
             insort(nets, snet)
             nethashes[nethash] = 1
 
